@@ -107,7 +107,7 @@ int record_thread(SceSize args, void *argp){
 	char path[256];
 	
 	for (;;){
-		if (is_recording) {		
+		if (is_recording) {
 			sceDisplayGetFrameBuf(&param, SCE_DISPLAY_SETBUF_NEXTFRAME);
 			if (rescale_buffer != NULL){ // Downscaler available
 				rescaleBuffer((uint32_t*)param.base, rescale_buffer, param.pitch, param.width, param.height);
@@ -125,6 +125,16 @@ int record_thread(SceSize args, void *argp){
 	}
 	sceIoClose(fd);
 	return 0;
+}
+
+// Alters recording state
+void alterRecordingState() {
+	is_recording = !is_recording;
+	if (is_recording) {
+		encoderSetQuality(&jpeg_encoder, qual_val[qual_i]);
+		if (is_async) sceKernelSignalSema(async_mutex, 1);
+		status = NOT_TRIGGERED;
+	}
 }
 
 // Checking buttons startup/closeup
@@ -156,12 +166,7 @@ void checkInput(SceCtrlData *ctrl) {
 				is_async = (is_async + 1) % 2;
 				break;
 			case 5:
-				is_recording = !is_recording;
-				if (is_recording) {
-					encoderSetQuality(&jpeg_encoder, qual_val[qual_i]);
-					if (is_async) sceKernelSignalSema(async_mutex, 1);
-					status = NOT_TRIGGERED;
-				}
+				alterRecordingState();
 				break;
 			default:
 				break;
@@ -173,11 +178,7 @@ void checkInput(SceCtrlData *ctrl) {
 		status = CONFIG_MENU;
 	} else if (((ctrl->buttons & SCE_CTRL_LTRIGGER) && (ctrl->buttons & SCE_CTRL_START))
 		&& (!((old_buttons & SCE_CTRL_LTRIGGER) && (old_buttons & SCE_CTRL_START)))) {
-		is_recording = !is_recording;
-		if (is_recording) {
-			encoderSetQuality(&jpeg_encoder, qual_val[qual_i]);
-			if (is_async) sceKernelSignalSema(async_mutex, 1);
-		}
+		alterRecordingState();
 	}
 	old_buttons = ctrl->buttons;
 }
