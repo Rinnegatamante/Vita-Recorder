@@ -29,7 +29,6 @@ At the time of writing, the plugin is in an experimental stage. Current plan for
 
 # Known Issues
 * Using Best or High video quality may result in empty videos being created (That's cause not enough resources are available for the encoder).
-* When recording in 960x544 resolution without downscaler, you may notice some artifacting in the video (This is cause the encoder is not fast enough to match renderer).
 
 # Notes
 <b>This plugin is an entry for the [KyûHEN PSVITA homebrew contest](https://kyuhen.customprotocol.com/en/).</b>
