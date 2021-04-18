@@ -29,6 +29,7 @@ static SceUID firstBoot = 1;
 static uint8_t status = NOT_TRIGGERED;
 static int cfg_i = 0;
 static int qual_i = 2;
+static error[128] = {0};
 
 // Video recording related variables
 static uint8_t video_quality = 255;
@@ -115,12 +116,16 @@ int record_thread(SceSize args, void *argp){
 			}else mem = encodeARGB(&jpeg_encoder, param.base, param.pitch, &mem_size);
 			sceIoWrite(fd, mem, mem_size);
 		} else {
-			if (fd) sceIoClose(fd);
+			if (fd > 0) sceIoClose(fd);
 			sceKernelWaitSema(async_mutex, 1, NULL);
 			SceDateTime date;
 			sceRtcGetCurrentClockLocalTime(&date);
 			sprintf(path, "ux0:data/vid_%s-%02d_%02d_%04d-%02d_%02d_%02d.mjpeg", titleid, date.day, date.month, date.year, date.hour, date.minute, date.second);
 			fd = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT, 0777);
+			if (fd < 0) {
+				sprintf(error, "ERROR: sceIoOpen -> 0x%08X", fd);
+				is_recording = false;
+			}
 		}
 	}
 	sceIoClose(fd);
@@ -204,6 +209,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	
 	if (status == NOT_TRIGGERED) {
 		if (isEncoderUnavailable) drawStringF(5,5, "ERROR: encoderInit -> 0x%X", isEncoderUnavailable);
+		else if (error[0])
 	} else if (!isEncoderUnavailable) {
 		switch (status){
 		case CONFIG_MENU:
@@ -225,6 +231,10 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 				sceRtcGetCurrentClockLocalTime(&date);
 				sprintf(path, "ux0:data/vid_%s-%02d_%02d_%04d-%02d_%02d_%02d.mjpeg", titleid, date.day, date.month, date.year, date.hour, date.minute, date.second);
 				sync_fd = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT, 0777);
+				if (sync_fd < 0) {
+					sprintf(error, "ERROR: sceIoOpen -> 0x%08X", sync_fd);
+					is_recording = false;
+				}
 			}
 			if (loopDrawing == frameskip) {				
 				int mem_size;
@@ -240,7 +250,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 		drawString(5, 5, "R");
 		setTextColor(0x00FFFFFF);
 	} else {
-		if (sync_fd) {
+		if (sync_fd > 0) {
 			sceIoClose(sync_fd);
 			sync_fd = 0;
 		}
