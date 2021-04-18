@@ -36,6 +36,7 @@ At the time of writing, the plugin is in an experimental stage. Current plan for
 # Known Issues
 * Using Best or High video quality may result in empty videos being created (That's cause not enough resources are available for the encoder).
 * Games with variable resolution may acy weirdly since there's no internal fixed rescaling and mjpeg doesn't support variable resolution between frames. (eg: Everybody's Golf)
+* System apps and Livearea are not supported (plan for those is to handle them directly with the future kernel version of the plugin instead of messing with SceSharedFb in user space)
 
 # Notes
 <b>This plugin is an entry for the [KyûHEN PSVITA homebrew contest](https://kyuhen.customprotocol.com/en/).</b>
