@@ -7,7 +7,7 @@
 #include "encoder.h"
 #include "rescaler.h"
 
-#define HOOKS_NUM       1
+#define HOOKS_NUM      13
 #define MENU_ENTRIES    6
 #define QUALITY_ENTRIES 5
 
@@ -264,6 +264,63 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	return TAI_CONTINUE(int, ref[0], pParam, sync);
 }
 
+int genericInputDisable(int idx, int port, SceCtrlData *ctrl, int count, int is_negative) {
+	int ret = TAI_CONTINUE(int, ref[idx], port, ctrl, count);
+	
+	if (status == CONFIG_MENU) // Disable input handling when in config menu
+		ctrl->buttons = is_negative ? 0xFFFFFFFF : 0;
+	
+	return ret;
+}
+
+int sceCtrlPeekBufferPositive_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(1, port, ctrl, count, 0);
+}
+
+int sceCtrlPeekBufferPositive2_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(2, port, ctrl, count, 0);
+}
+
+int sceCtrlReadBufferPositive_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(3, port, ctrl, count, 0);
+}
+
+int sceCtrlReadBufferPositive2_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(4, port, ctrl, count, 0);
+}
+
+int sceCtrlPeekBufferPositiveExt_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(5, port, ctrl, count, 0);
+}
+
+int sceCtrlPeekBufferPositiveExt2_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(6, port, ctrl, count, 0);
+}
+
+int sceCtrlReadBufferPositiveExt_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(7, port, ctrl, count, 0);
+}
+
+int sceCtrlReadBufferPositiveExt2_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(8, port, ctrl, count, 0);
+}
+
+int sceCtrlPeekBufferNegative_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(9, port, ctrl, count, 1);
+}
+
+int sceCtrlPeekBufferNegative2_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(10, port, ctrl, count, 1);
+}
+
+int sceCtrlReadBufferNegative_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(11, port, ctrl, count, 1);
+}
+
+int sceCtrlReadBufferNegative2_patched(int port, SceCtrlData *ctrl, int count) {
+	return genericInputDisable(12, port, ctrl, count, 1);
+}
+
 void _start() __attribute__ ((weak, alias ("module_start")));
 int module_start(SceSize argc, const void *args) {
 	
@@ -312,6 +369,18 @@ int module_start(SceSize argc, const void *args) {
 	
 	// Hooking needed functions
 	hookFunction(0x7A410B64, sceDisplaySetFrameBuf_patched);
+	hookFunction(0xA9C3CED6, sceCtrlPeekBufferPositive_patched);
+	hookFunction(0x15F81E8C, sceCtrlPeekBufferPositive2_patched);
+	hookFunction(0x67E7AB83, sceCtrlReadBufferPositive_patched);
+	hookFunction(0xC4226A3E, sceCtrlReadBufferPositive2_patched);
+	hookFunction(0xA59454D3, sceCtrlPeekBufferPositiveExt_patched);
+	hookFunction(0x860BF292, sceCtrlPeekBufferPositiveExt2_patched);
+	hookFunction(0xE2D99296, sceCtrlReadBufferPositiveExt_patched);
+	hookFunction(0xA7178860, sceCtrlReadBufferPositiveExt2_patched);
+	hookFunction(0x104ED1A7, sceCtrlPeekBufferNegative_patched);
+	hookFunction(0x81A89660, sceCtrlPeekBufferNegative2_patched);
+	hookFunction(0x15F96FB0, sceCtrlReadBufferNegative_patched);
+	hookFunction(0x27A0C5FB, sceCtrlReadBufferNegative2_patched);
 	
 	return SCE_KERNEL_START_SUCCESS;
 }

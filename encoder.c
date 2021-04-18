@@ -37,7 +37,7 @@ void encoderSetQuality(encoder *enc, uint16_t video_quality) {
 		sceJpegEncoderSetCompressionRatio(enc->context, video_quality);
 		sceJpegEncoderSetOutputAddr(enc->context, enc->main_buffer + enc->in_size, enc->out_size);
 	} else {
-		jpeg_set_quality(&cinfo, 100 - ((100*video_quality) / 255), TRUE);
+		jpeg_set_quality(&cinfo, 100 - ((100 * video_quality) / 255), TRUE);
 	}
 	enc->quality = video_quality;
 }
@@ -134,7 +134,7 @@ void encoderTerm(encoder *enc) {
 	}
 }
 
-void* encodeARGB(encoder *enc, void* buffer, int pitch, int* outSize) {
+void *encodeARGB(encoder *enc, void* buffer, int pitch, int* outSize) {
 	if (enc->isHwAccelerated) {
 		sceJpegEncoderCsc(enc->context, enc->main_buffer, buffer, pitch, SCE_JPEGENC_PIXELFORMAT_ARGB8888);
 		*outSize = sceJpegEncoderEncode(enc->context, enc->main_buffer);
