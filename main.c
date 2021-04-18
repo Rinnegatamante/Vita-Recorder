@@ -208,7 +208,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	checkInput(&pad);
 	
 	if (status == NOT_TRIGGERED) {
-		if (isEncoderUnavailable) drawStringF(5,5, "ERROR: encoderInit -> 0x%X", isEncoderUnavailable);
+		if (isEncoderUnavailable) drawStringF(5,5, "ERROR: encoderInit -> 0x%08X", isEncoderUnavailable);
 		else if (error[0])
 	} else if (!isEncoderUnavailable) {
 		switch (status){

@@ -27,6 +27,10 @@ At the time of writing, the plugin is in an experimental stage. Current plan for
 * Create a kernel plugin variant. (ucd_uvc can be used as base, the idea is to allow multiapp recordings)
 * Whenever possible (mostly small homebrew apps due to the high resources requirements), stick to SceLibMp4Recorder for MP4 recording. (AVC+AAC)
 
+# Known Issues
+* Using Best or High video quality may result in empty videos being created (That's cause not enough resources are available for the encoder).
+* When recording in 960x544 resolution without downscaler, you may notice some artifacting in the video (This is cause the encoder is not fast enough to match renderer).
+
 # Notes
 <b>This plugin is an entry for the [KyûHEN PSVITA homebrew contest](https://kyuhen.customprotocol.com/en/).</b>
 
