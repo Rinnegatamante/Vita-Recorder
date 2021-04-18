@@ -9,18 +9,18 @@ uint32_t* vram32;
 int pwidth, pheight, bufferwidth;
 uint32_t color;
 
-void updateFramebuf(const SceDisplayFrameBuf *param){
+void updateFramebuf(const SceDisplayFrameBuf *param) {
 	pwidth = param->width;
 	pheight = param->height;
 	vram32 = param->base;
 	bufferwidth = param->pitch;
 }
 
-void setTextColor(uint32_t clr){
+void setTextColor(uint32_t clr) {
 	color = clr;
 }
 
-void drawCharacter(int character, int x, int y){
+void drawCharacter(int character, int x, int y) {
     for (int yy = 0; yy < 10; yy++) {
         int xDisplacement = x;
         int yDisplacement = (y + (yy<<1)) * bufferwidth;
@@ -38,12 +38,12 @@ void drawCharacter(int character, int x, int y){
     }
 }
 
-void drawString(int x, int y, const char *str){
+void drawString(int x, int y, const char *str) {
     for (size_t i = 0; i < strlen(str); i++)
         drawCharacter(str[i], x + i * 12, y);
 }
 
-void drawStringF(int x, int y, const char *format, ...){
+void drawStringF(int x, int y, const char *format, ...) {
 	char str[512] = { 0 };
 	va_list va;
 

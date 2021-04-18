@@ -1,7 +1,7 @@
 #include <vitasdk.h>
 
 // CPU downscaling function (0.5 scale)
-void rescaleBuffer(uint32_t* src, uint32_t* dst, uint32_t pitch, uint32_t width, uint32_t height){
+void rescaleBuffer(uint32_t* src, uint32_t* dst, uint32_t pitch, uint32_t width, uint32_t height) {
 	int i,j,z,k,ptr;
 	z=0;
 	k=0;

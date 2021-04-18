@@ -17,9 +17,9 @@ typedef struct encoder{
 	uint32_t rowstride;            // Used only by libjpeg-turbo
 }encoder;
 
-SceUID encoderInit(int width, int height, int pitch, encoder* enc, uint16_t video_quality, uint8_t enforce_sw, uint8_t enforce_fullres);
+void encoderInit(int width, int height, int pitch, encoder* enc, uint16_t video_quality, uint8_t enforce_sw, uint8_t enforce_fullres);
 void encoderTerm(encoder* enc);
-void* encodeARGB(encoder* enc, void* buffer, int pitch, int* outSize);
+void *encodeARGB(encoder* enc, void* buffer, int pitch, int* outSize);
 void encoderSetQuality(encoder* enc, uint16_t video_quality);
 void encoderSetRescaler(encoder* enc, uint8_t use);
 

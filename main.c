@@ -24,7 +24,6 @@ static tai_hook_ref_t ref[HOOKS_NUM];
 static uint8_t cur_hook = 0;
 
 // Status related variables
-static SceUID isEncoderUnavailable = 0;
 static SceUID firstBoot = 1;
 static uint8_t status = NOT_TRIGGERED;
 static int cfg_i = 0;
@@ -63,9 +62,9 @@ SceUID sync_fd = 0;
 // Config Menu Renderer
 void drawConfigMenu(){
 	int i;
-	for (i = 0; i < MENU_ENTRIES; i++){
+	for (i = 0; i < MENU_ENTRIES; i++) {
 		(i == cfg_i) ? setTextColor(0x0000FF00) : setTextColor(0x00FFFFFF);
-		switch (i){
+		switch (i) {
 			case 0:
 				drawStringF(5, 80 + i*20, "%s%s", menu[i], qualities[qual_i]);
 				break;
@@ -93,13 +92,13 @@ void drawConfigMenu(){
 }
 
 // Generic hooking function
-void hookFunction(uint32_t nid, const void* func){
+void hookFunction(uint32_t nid, const void* func) {
 	g_hooks[cur_hook] = taiHookFunctionImport(&ref[cur_hook], TAI_MAIN_MODULE, TAI_ANY_LIBRARY, nid, func);
 	cur_hook++;
 }
 
 // Asynchronous video recording thread
-int record_thread(SceSize args, void *argp){
+int record_thread(SceSize args, void *argp) {
 	
 	int mem_size, frames = 0;
 	SceDisplayFrameBuf param;
@@ -107,7 +106,7 @@ int record_thread(SceSize args, void *argp){
 	SceUID fd = 0;
 	char path[256];
 	
-	for (;;){
+	for (;;) {
 		if (is_recording) {
 			sceDisplayGetFrameBuf(&param, SCE_DISPLAY_SETBUF_NEXTFRAME);
 			if (rescale_buffer != NULL){ // Downscaler available
@@ -198,7 +197,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 		setTextColor(0x00FFFFFF);
 		
 		// Initializing JPG encoder
-		isEncoderUnavailable = encoderInit(pParam->width, pParam->height, pParam->pitch, &jpeg_encoder, video_quality, enforce_sw, 0);
+		encoderInit(pParam->width, pParam->height, pParam->pitch, &jpeg_encoder, video_quality, enforce_sw, 0);
 		rescale_buffer = (uint32_t*)jpeg_encoder.rescale_buffer;	
 	}
 	
@@ -208,10 +207,9 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	checkInput(&pad);
 	
 	if (status == NOT_TRIGGERED) {
-		if (isEncoderUnavailable) drawStringF(5,5, "ERROR: encoderInit -> 0x%08X", isEncoderUnavailable);
-		else if (error[0])
-	} else if (!isEncoderUnavailable) {
-		switch (status){
+		if (error[0]) drawString(5,5, error[0]);
+	} else {
+		switch (status) {
 		case CONFIG_MENU:
 			drawStringF(5,5, "Title ID: %s", titleid);
 			drawString(5, 25, "Vita Recorder v.0.1 - CONFIG MENU");
@@ -319,13 +317,11 @@ int module_start(SceSize argc, const void *args) {
 int module_stop(SceSize argc, const void *args) {
 	
 	// Freeing encoder and net related stuffs
-	if (!firstBoot){
-		if (!isEncoderUnavailable) encoderTerm(&jpeg_encoder);
-	}
+	if (!firstBoot) encoderTerm(&jpeg_encoder);
 	
 	// Freeing hooks
 	int i;
-	for (i = 0; i < HOOKS_NUM; i++){
+	for (i = 0; i < HOOKS_NUM; i++) {
 		taiHookRelease(g_hooks[i], ref[i]);
 	}
 
