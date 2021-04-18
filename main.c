@@ -118,7 +118,7 @@ int record_thread(SceSize args, void *argp) {
 			sceKernelWaitSema(async_mutex, 1, NULL);
 			SceDateTime date;
 			sceRtcGetCurrentClockLocalTime(&date);
-			sprintf(path, "ux0:data/vid_%s-%02d_%02d_%04d-%02d_%02d_%02d.mjpeg", titleid, date.day, date.month, date.year, date.hour, date.minute, date.second);
+			sprintf(path, "ux0:data/vid_%s-%02d_%02d_%04d-%02d_%02d_%02d.mjpg", titleid, date.day, date.month, date.year, date.hour, date.minute, date.second);
 			fd = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT, 0777);
 			if (fd < 0) {
 				sprintf(error, "ERROR: sceIoOpen -> 0x%08X", fd);
@@ -226,7 +226,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 			if (!sync_fd) {
 				SceDateTime date;
 				sceRtcGetCurrentClockLocalTime(&date);
-				sprintf(path, "ux0:data/vid_%s-%02d_%02d_%04d-%02d_%02d_%02d.mjpeg", titleid, date.day, date.month, date.year, date.hour, date.minute, date.second);
+				sprintf(path, "ux0:data/vid_%s-%02d_%02d_%04d-%02d_%02d_%02d.mjpg", titleid, date.day, date.month, date.year, date.hour, date.minute, date.second);
 				sync_fd = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT, 0777);
 				if (sync_fd < 0) {
 					sprintf(error, "ERROR: sceIoOpen -> 0x%08X", sync_fd);

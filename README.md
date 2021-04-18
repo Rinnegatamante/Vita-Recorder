@@ -21,10 +21,10 @@ The code is based off VITA2PC at which has been applied improvements and the str
 * Triangle = Close Config Menu (when in Config Menu)
 
 # Output Videos
-The output videos can be found in `ux0:data` named as `vid_TITLEID_DATE_TIME.mjpeg`.<br>
+The output videos can be found in `ux0:data` named as `vid_TITLEID_DATE_TIME.mjpg`.<br>
 These files are raw mjpeg data and can be played with several video players such as `ffplay` or `WMP`.<br>
 You can also use `ffmpeg` to convert them in more popular MP4 videos with a command like this (Note: This creates videos with fixed 25 fps):<br>
-`ffmpeg -i vid_GTAVCECTY-17_04_2021-21_02_33.mjpeg -pix_fmt yuv420p -b:v 4000k -c:v libx264 vid_GTAVCECTY-17_04_2021-21_02_33.mp4`
+`ffmpeg -i vid_GTAVCECTY-17_04_2021-21_02_33.mjpg -pix_fmt yuv420p -b:v 4000k -c:v libx264 vid_GTAVCECTY-17_04_2021-21_02_33.mp4`
 
 # Plans for the future
 At the time of writing, the plugin is in an experimental stage. Current plan for the future is:<br>
