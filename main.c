@@ -46,7 +46,7 @@ static uint32_t old_buttons;
 // Menu related variables
 static char* qualities[] = {"Best", "High", "Default", "Low", "Worst"};
 static uint8_t qual_val[] = {0, 64, 128, 192, 255};
-static char* menu[] = {"Video Quality: ", "Hardware Acceleration: ", "Downscaler: ","Frame Skip: ", "Recorder Type: ", " Screen Recording"};
+static char* menu[] = {"Video Quality: ", "Hardware Acceleration: ", "Downscaler: ", "Frame Skip: ", "Recorder Type: ", " Screen Recording"};
 
 // Generic variables
 static uint32_t mempool_size = 0x500000;
@@ -74,7 +74,8 @@ void drawConfigMenu(){
 				drawStringF(5, 80 + i*20, "%s%s", menu[i], (jpeg_encoder.rescale_buffer != NULL) ? "Enabled" : "Disabled");
 				break;
 			case 3:
-				drawStringF(5, 80 + i*20, "%s%u", menu[i], frameskip);
+				if (is_async) drawStringF(5, 80 + i*20, "%sAuto", menu[i]);
+				else drawStringF(5, 80 + i*20, "%s%u", menu[i], frameskip);
 				break;
 			case 4:
 				drawStringF(5, 80 + i*20, "%s%s", menu[i], is_async ? "Asynchronous" : "Synchronous");
@@ -163,7 +164,7 @@ void checkInput(SceCtrlData *ctrl) {
 				rescale_buffer = jpeg_encoder.rescale_buffer;
 				break;
 			case 3:
-				frameskip = (frameskip + 1) % 5;
+				if (!is_async) frameskip = (frameskip + 1) % 5;
 				break;
 			case 4:
 				is_async = (is_async + 1) % 2;
@@ -212,7 +213,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 		case CONFIG_MENU:
 			drawString(5, 5, "Vita Recorder v.0.1 - CONFIG MENU");
 			drawStringF(5, 25, "Title ID: %s", titleid);
-			drawStringF(5, 250, "Resolution: %d x %d", pParam->width, pParam->height);
+			drawStringF(5, 45, "Resolution: %dx%d", pParam->width, pParam->height);
 			drawConfigMenu();
 			break;
 		default:
