@@ -37,7 +37,6 @@ static uint8_t frameskip = 0;
 static uint8_t is_async = 1;
 static uint8_t* mem;
 static uint32_t* rescale_buffer = NULL;
-static uint8_t enforce_sw = 0;
 static uint8_t is_recording = 0;
 
 // Drawing related variables
@@ -160,7 +159,7 @@ void checkInput(SceCtrlData *ctrl) {
 			case 2:
 				param.size = sizeof(SceDisplayFrameBuf);
 				sceDisplayGetFrameBuf(&param, SCE_DISPLAY_SETBUF_NEXTFRAME);
-				if (param.width == 960 && param.height == 544) encoderSetRescaler(&jpeg_encoder, (rescale_buffer == NULL) ? 1 : 0);
+				if (param.width == 960 && param.height == 544) encoderSetRescaler(&jpeg_encoder, (rescale_buffer == NULL) ? 1 : 0, param.pitch);
 				rescale_buffer = jpeg_encoder.rescale_buffer;
 				break;
 			case 3:
@@ -197,7 +196,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 		setTextColor(0x00FFFFFF);
 		
 		// Initializing JPG encoder
-		encoderInit(pParam->width, pParam->height, pParam->pitch, &jpeg_encoder, video_quality, enforce_sw, 0);
+		encoderInit(pParam->width, pParam->height, pParam->pitch, &jpeg_encoder, video_quality, 0);
 		rescale_buffer = (uint32_t*)jpeg_encoder.rescale_buffer;	
 	}
 	
