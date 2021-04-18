@@ -123,11 +123,11 @@ int record_thread(SceSize args, void *argp) {
 			fd = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT, 0777);
 			if (fd < 0) {
 				sprintf(error, "ERROR: sceIoOpen -> 0x%08X", fd);
-				is_recording = false;
+				is_recording = 0;
 			}
 		}
 	}
-	sceIoClose(fd);
+
 	return 0;
 }
 
@@ -211,8 +211,8 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	} else {
 		switch (status) {
 		case CONFIG_MENU:
-			drawStringF(5,5, "Title ID: %s", titleid);
-			drawString(5, 25, "Vita Recorder v.0.1 - CONFIG MENU");
+			drawString(5, 5, "Vita Recorder v.0.1 - CONFIG MENU");
+			drawStringF(5, 25, "Title ID: %s", titleid);
 			drawStringF(5, 250, "Resolution: %d x %d", pParam->width, pParam->height);
 			drawConfigMenu();
 			break;
@@ -231,7 +231,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 				sync_fd = sceIoOpen(path, SCE_O_WRONLY | SCE_O_CREAT, 0777);
 				if (sync_fd < 0) {
 					sprintf(error, "ERROR: sceIoOpen -> 0x%08X", sync_fd);
-					is_recording = false;
+					is_recording = 0;
 				}
 			}
 			if (loopDrawing == frameskip) {				
@@ -258,7 +258,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	if (status != CONFIG_MENU) {
 		setTextColor(0x00FFFFFF);
 		drawStringF(5, 100, "taipool free space: %lu KBs", (taipool_get_free_space()>>10));
-		drawStringF(5, 120, "Debug: 0x%X", debug);
+		drawStringF(5, 120, "Debug: 0x%08X", debug);
 	}
 #endif
 	
@@ -306,7 +306,10 @@ int module_start(SceSize argc, const void *args) {
 	if (record_thread_id >= 0) sceKernelStartThread(record_thread_id, 0, NULL);
 	
 	// Initializing taipool mempool for dynamic memory managing
-	taipool_init(mempool_size);
+	if (taipool_init(mempool_size) < 0) {
+		mempool_size = 0x200000;
+		taipool_init(mempool_size);
+	}
 	
 	// Hooking needed functions
 	hookFunction(0x7A410B64, sceDisplaySetFrameBuf_patched);
