@@ -52,7 +52,7 @@ void encoderInit(int width, int height, int pitch, encoder* enc, uint16_t video_
 		enc->out_size = (pitch*height)<<2;
 	}
 	enc->rescale_buffer = NULL;
-	uint32_t tempbuf_size = ALIGN(enc->in_size + enc->out_size,0x40000);
+	uint32_t tempbuf_size = ALIGN(enc->in_size + enc->out_size, 0x40000);
 	if (enforce_sw) enc->gpublock = -1;
 	else enc->gpublock = sceKernelAllocMemBlock("encoderBuffer", SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW, tempbuf_size, NULL);
 	if (enc->gpublock < 0 && !enforce_sw) { // Trying to use hw acceleration without VRAM
@@ -82,7 +82,7 @@ void encoderInit(int width, int height, int pitch, encoder* enc, uint16_t video_
 	} else { // Will use sceJpegEnc
 		enc->isHwAccelerated = 1;
 		sceKernelGetMemBlockBase(enc->gpublock, &enc->tempbuf_addr);
-		enc->context = malloc(ALIGN(sceJpegEncoderGetContextSize(),0x40000));
+		enc->context = malloc(ALIGN(sceJpegEncoderGetContextSize(), 0x40000));
 		if (width == 960 && height == 544 && (!enforce_fullres)) { // Setup downscaler for better framerate
 			enc->rescale_buffer = enc->tempbuf_addr + enc->in_size;
 			sceJpegEncoderInitAdvanced(enc, 480, 272, SCE_JPEGENC_PIXELFORMAT_YCBCR420 | SCE_JPEGENC_PIXELFORMAT_CSC_ARGB_YCBCR);
@@ -106,9 +106,9 @@ void encoderSetRescaler(encoder *enc, uint8_t use) {
 	} else {
 		if (enc->isHwAccelerated) {
 			sceKernelFreeMemBlock(enc->gpublock);
-			enc->in_size = ALIGN(1044480, 0x10);
-			enc->out_size = 2228224;
-			uint32_t tempbuf_size = ALIGN(enc->in_size + enc->out_size,0x40000);
+			enc->in_size = ALIGN((960*544)<<1, 0x10);
+			enc->out_size = (1024*544)<<2;
+			uint32_t tempbuf_size = ALIGN(enc->in_size + enc->out_size, 0x40000);
 			enc->vram_usage = 1;
 			enc->gpublock = sceKernelAllocMemBlock("encoderBuffer", SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW, tempbuf_size, NULL);
 			if (enc->gpublock < 0) { // Trying to use hw acceleration without VRAM
@@ -157,7 +157,7 @@ void* encodeARGB(encoder *enc, void* buffer, int pitch, int* outSize) {
 		*outSize = sceJpegEncoderEncode(enc->context, enc->tempbuf_addr);
 		return enc->tempbuf_addr + enc->in_size;
 	} else {
-		unsigned char* outBuffer = (unsigned char*)enc->tempbuf_addr;
+		unsigned char *outBuffer = (unsigned char*)enc->tempbuf_addr;
 		long unsigned int out_size = enc->out_size;
 		jpeg_mem_dest(&cinfo, &outBuffer, &out_size);
 		jpeg_start_compress(&cinfo, TRUE);

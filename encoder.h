@@ -14,7 +14,7 @@ typedef struct encoder{
 	uint32_t out_size;
 	uint8_t quality;
 	SceJpegEncoderContext context; // used only by sceJpegEnc
-	uint32_t rowstride;            // Used only by libjpeg-turbo
+	uint32_t rowstride; // used only by libjpeg-turbo
 }encoder;
 
 void encoderInit(int width, int height, int pitch, encoder* enc, uint16_t video_quality, uint8_t enforce_sw, uint8_t enforce_fullres);

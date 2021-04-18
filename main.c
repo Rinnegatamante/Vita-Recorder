@@ -109,10 +109,10 @@ int record_thread(SceSize args, void *argp) {
 	for (;;) {
 		if (is_recording) {
 			sceDisplayGetFrameBuf(&param, SCE_DISPLAY_SETBUF_NEXTFRAME);
-			if (rescale_buffer != NULL){ // Downscaler available
+			if (rescale_buffer != NULL) { // Downscaler available
 				rescaleBuffer((uint32_t*)param.base, rescale_buffer, param.pitch, param.width, param.height);
 				mem = encodeARGB(&jpeg_encoder, rescale_buffer, 512, &mem_size);
-			}else mem = encodeARGB(&jpeg_encoder, param.base, param.pitch, &mem_size);
+			} else mem = encodeARGB(&jpeg_encoder, param.base, param.pitch, &mem_size);
 			sceIoWrite(fd, mem, mem_size);
 		} else {
 			if (fd > 0) sceIoClose(fd);
