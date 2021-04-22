@@ -211,7 +211,7 @@ int sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 	} else {
 		switch (status) {
 		case CONFIG_MENU:
-			drawString(5, 5, "Vita Recorder v.0.1 - CONFIG MENU");
+			drawString(5, 5, "Vita Recorder v.0.1.1 - CONFIG MENU");
 			drawStringF(5, 25, "Title ID: %s", titleid);
 			drawStringF(5, 45, "Resolution: %dx%d", pParam->width, pParam->height);
 			drawConfigMenu();
