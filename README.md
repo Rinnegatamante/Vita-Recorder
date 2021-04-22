@@ -12,8 +12,31 @@ The code is based off VITA2PC at which has been applied improvements and the str
 
 # How to install
 * Put `VitaRecorder.suprx` in your `tai` folder.
-* Add the plugin under a section for the game you want to use it for (eg `*GTAVCECTY`) in your `config.txt` file. (Alternatively you can place it under `*ALL` but some apps may crash with this due to the resources requirements)
+* Add the plugin under a section for the game you want to use it for (eg `*GTAVCECTY`) in your `config.txt` file. (Alternatively you can place it under `*ALL` in a section where `main` is disabled (check down for an example) but some apps may crash with this due to the resources requirements).
 * If you want to use this plugin on commercial games, you'll need to install [ioPlus](https://github.com/CelesteBlue-dev/PSVita-RE-tools/blob/master/ioPlus/ioPlus-0.1/release/ioplus.skprx?raw=true) as well by adding it in your `*KERNEL` section in your `config.txt`.
+
+Here's an example of a config.txt with the plugin installed in `*ALL` section:
+```
+*KERNEL
+ux0:tai/PSVshell.skprx
+ux0:tai/AnalogsEnhancer.skprx
+ux0:tai/fd_fix.skprx
+ux0:tai/kubridge.skprx
+#ux0:tai/gxmdbg.skprx
+ux0:tai/ioplus.skprx
+*ALL
+ux0:tai/WDNR.suprx
+*main
+ux0:tai/pngshot.suprx
+ur0:tai/henkaku.suprx
+*!main
+*ALL
+ux0:tai/VitaRecorder.suprx
+*NPXS10015
+ur0:tai/henkaku.suprx
+*NPXS10016
+ur0:tai/henkaku.suprx
+```
 
 # Controls
 * L + Select = Open the Config Menu
