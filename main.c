@@ -332,26 +332,28 @@ int module_start(SceSize argc, const void *args) {
 	scePowerSetGpuXbarClockFrequency(166);
 	
 	// Checking if game is blacklisted
-	sceAppMgrAppParamGetString(0, 12, titleid , 256);	
-	if (strncmp(titleid, "PCSE00491", 9) == 0){ // Minecraft (USA)
+	sceAppMgrAppParamGetString(0, 12, titleid , 256);
+	if (strncmp(titleid, "NPXS", 4) == 0) { // System Apps
+		return SCE_KERNEL_START_NO_RESIDENT;
+	} else if (strncmp(titleid, "PCSE00491", 9) == 0) { // Minecraft (USA)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSB00074", 9) == 0){ // Assassin's Creed III: Liberation (EUR)
+	} else if (strncmp(titleid, "PCSB00074", 9) == 0) { // Assassin's Creed III: Liberation (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSF00178", 9) == 0){ // Soul Sacrifice (EUR)
+	} else if (strncmp(titleid, "PCSF00178", 9) == 0) { // Soul Sacrifice (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSF00024", 9) == 0){ // Gravity Rush (EUR)
+	} else if (strncmp(titleid, "PCSF00024", 9) == 0) { // Gravity Rush (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSB00170", 9) == 0){ // FIFA 13 (EUR)
+	} else if (strncmp(titleid, "PCSB00170", 9) == 0) { // FIFA 13 (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSB00001", 9) == 0){ // Uncharted: Golden Abyss (EUR)
+	} else if (strncmp(titleid, "PCSB00001", 9) == 0) { // Uncharted: Golden Abyss (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSB00404", 9) == 0){ // Muramasa Rebirth (EUR)
+	} else if (strncmp(titleid, "PCSB00404", 9) == 0) { // Muramasa Rebirth (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSF00217", 9) == 0){ // Smart As... (EUR)
+	} else if (strncmp(titleid, "PCSF00217", 9) == 0) { // Smart As... (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSF00485", 9) == 0){ // Ratchet and Clank 2 (EUR)
+	} else if (strncmp(titleid, "PCSF00485", 9) == 0) { // Ratchet and Clank 2 (EUR)
 		mempool_size = 0x200000;
-	}else if (strncmp(titleid, "PCSF00486", 9) == 0){ // Ratchet and Clank 3 (EUR)
+	} else if (strncmp(titleid, "PCSF00486", 9) == 0) { // Ratchet and Clank 3 (EUR)
 		mempool_size = 0x200000;
 	}
 	
@@ -388,15 +390,17 @@ int module_start(SceSize argc, const void *args) {
 
 int module_stop(SceSize argc, const void *args) {
 	
-	// Freeing encoder and net related stuffs
-	if (!firstBoot) encoderTerm(&jpeg_encoder);
+	// Freeing encoder
+	if (!firstBoot) {
+		encoderTerm(&jpeg_encoder);
 	
-	// Freeing hooks
-	int i;
-	for (i = 0; i < HOOKS_NUM; i++) {
-		taiHookRelease(g_hooks[i], ref[i]);
+		// Freeing hooks
+		int i;
+		for (i = 0; i < HOOKS_NUM; i++) {
+			taiHookRelease(g_hooks[i], ref[i]);
+		}
 	}
-
+	
 	return SCE_KERNEL_STOP_SUCCESS;
 	
 }
